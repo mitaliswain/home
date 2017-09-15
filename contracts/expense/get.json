@@ -1,0 +1,20 @@
+{
+  "id": 123456,
+  "week": 12,
+  "total_expense_amount": 5000,
+  "expense_list": {
+    "rent":3000,
+    "car_lease": 500,
+    "insurance": 100,
+    "grocery": {
+      "indian_grocery": 100,
+      "american_grocery": 200
+    },
+    "shopping": {
+      "kids": 100,
+      "Adult": 200
+    },
+    "travel": 100,
+    "daily_expense": 100  
+  }
+}
