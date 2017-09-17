@@ -40,6 +40,41 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
+
+router.get('/', function(req, res, next) {
+
+
+  var findExpense = function(db, callback) {
+     var docs  = []
+     var cursor =db.collection('home').find();
+     cursor.each(function(err, doc) {
+        if(err){
+          res.send('Error in finding data!');
+        }
+        if (doc != null) {
+            docs.push(doc);
+
+        } else {
+           callback(docs);
+        }
+     });
+
+  };
+
+  MongoClient.connect(url, function(err, db) {
+      if(err){
+        res.send('Error in connection!');
+      }
+      else{
+        findExpense(db, function(docs) {
+          res.send(docs);
+          db.close();
+        });
+      }
+
+  });
+});
+
 router.post('/', function(req, res, next) {
 
   var insertDocument = function(json, db, callback) {
