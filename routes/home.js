@@ -39,4 +39,30 @@ router.get('/:id', function(req, res, next) {
 
   });
 });
+
+router.post('/', function(req, res, next) {
+
+  var insertDocument = function(json, db, callback) {
+     db.collection('home').insertOne( json,
+     function(err, result) {
+      console.log("Inserted a document into the restaurants collection.");
+      console.log(result.insertedId);
+      callback(result.insertedId);
+    });
+  };
+
+  var json = req.body
+  MongoClient.connect(url, function(err, db) {
+    if(err){
+      res.send('Error in connection!');
+    }
+    else{
+      insertDocument(json, db, function(id) {
+            db.close();
+            res.send('http://localhost:3000/home/'+ id )
+          });
+    }
+  });
+})
+
 module.exports = router;
