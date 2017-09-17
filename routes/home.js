@@ -59,7 +59,7 @@ router.post('/', function(req, res, next) {
     else{
       insertDocument(json, db, function(id) {
             db.close();
-            res.send( "http://"+req.headers.host+'/'+ id )
+            res.send( "http://"+req.headers.host+'/home/'+ id )
           });
     }
   });
