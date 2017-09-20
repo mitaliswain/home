@@ -191,7 +191,6 @@ router.delete('/', function(req, res, next) {
       res.send('deleted..');
       db.close();
       });
-
     }
   })
 
