@@ -44,9 +44,9 @@ router.get('/:id', function(req, res, next) {
 router.get('/', function(req, res, next) {
 
 
-  var findExpense = function(db, callback) {
+  var findExpense = function(week, db, callback) {
      var docs  = []
-     var cursor =db.collection('home').find();
+     var cursor =db.collection('home').find({"week":parseInt(week)});
      cursor.each(function(err, doc) {
         if(err){
           res.send('Error in finding data!');
@@ -61,12 +61,13 @@ router.get('/', function(req, res, next) {
 
   };
 
+  var week = req.query.week;
   MongoClient.connect(url, function(err, db) {
       if(err){
         res.send('Error in connection!');
       }
       else{
-        findExpense(db, function(docs) {
+        findExpense(week, db, function(docs) {
           res.send(docs);
           db.close();
         });
@@ -99,5 +100,104 @@ router.post('/', function(req, res, next) {
     }
   });
 })
+
+router.put('/:id', function(req, res, next){
+
+   var updatehome = function(id, expense, db, callback) {
+   //console.log(filterOptions);
+   db.collection('home').update(
+     {"_id": ObjectId(id)},
+     { $set: { "total_expense_amount": expense} }, function(err, results) {
+        if (err) {
+          console.log(err);
+        }
+      callback();
+   });
+};
+
+//var filterOptions  = {}
+//var josnToUpdate = req.body;
+
+//filterOptions.name = req.query.name;
+//filterOptions.borough = req.query.borough;
+
+//console.log(filterOptions.name);
+var id = req.params.id;
+var expense = req.body.total_expense_amount;
+MongoClient.connect(url, function(err, db) {
+  if(err){
+    res.send('Error in connection!');
+  }
+  else{
+    updatehome(id, expense, db, function() {
+        db.close();
+        res.send('updated..')
+    });
+  }
+});
+
+})
+
+router.put('/', function(req, res, next){
+
+   var updatehome = function(week, expense, db, callback) {
+   console.log(parseInt(week))
+   db.collection('home').updateMany(
+    {"week":parseInt(week)},
+    {$set: { "total_expense_amount": expense}},
+
+     function(err, results) {
+        if (err) {
+          console.log(err);
+        }
+      callback();
+   });
+};
+var expense = req.body.total_expense_amount;
+var week = req.query.week;
+MongoClient.connect(url, function(err, db) {
+  if(err){
+    res.send('Error in connection!');
+  }
+  else{
+    updatehome(week, expense, db, function() {
+        db.close();
+        res.send('updated..')
+    });
+  }
+});
+
+})
+router.delete('/', function(req, res, next) {
+
+  var removehome = function(week,db, callback) {
+     db.collection('home').deleteMany(
+        {"week":parseInt(week)},
+        function(err, results) {
+           console.log(err);
+           callback();
+        }
+     );
+  };
+
+  var week = req.query.week;
+  MongoClient.connect(url, function(err, db){
+
+    if(err){
+      res.send('Error in connection');
+    }
+    else{
+      removehome(week,db, function() {
+      res.send('deleted..');
+      db.close();
+      });
+
+    }
+  })
+
+})
+
+
+
 
 module.exports = router;
